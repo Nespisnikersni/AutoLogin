@@ -32,7 +32,7 @@ public class ConfigMenuScreen extends Screen {
         executorService = Executors.newSingleThreadScheduledExecutor();
     }
 
-
+    private ConfigA config=new ConfigA();
     public ButtonWidget button2;
     public ButtonWidget button3;
     public ButtonWidget button4;
@@ -42,9 +42,8 @@ public class ConfigMenuScreen extends Screen {
     public TextWidget buttonT5;
     public TextWidget buttonT6;
     public TextFieldWidget inputField;
-    private boolean autoLogin = Boolean.valueOf(ConfigA.getString("AutoLogin","autoLogin"));
-    private boolean autoRegister = Boolean.valueOf(ConfigA.getString("AutoLogin","autoRegister"));
-    private ConfigA config=new ConfigA();
+    private boolean autoLogin = Boolean.valueOf(config.getValue("AutoLogin","autoLogin"));
+    private boolean autoRegister = Boolean.valueOf(config.getValue("AutoLogin","autoRegister"));
     @Override
     protected void init() {
         button2 = ButtonWidget.builder(Text.literal(String.valueOf(autoLogin)), button -> {
@@ -88,8 +87,8 @@ public class ConfigMenuScreen extends Screen {
         buttonT5 = new TextWidget(width / 2 - 120, 140, 120, 20, Text.literal("autoregisterpassword") , textRenderer);
         buttonT6 = new TextWidget(width / 2, 161, 100, 20, Text.literal("") , textRenderer);
         inputField = new TextFieldWidget(textRenderer, width / 2, 141, 70, 20, Text.of("password"));
-        if(ConfigA.getString("AutoLogin", "autoRegisterPassword")!=ConfigA.encryptString(inputField.getText())){
-            inputField.setText(ConfigA.decryptString(ConfigA.getString("AutoLogin", "autoRegisterPassword")));
+        if(config.getValue("AutoLogin", "autoRegisterPassword")!=config.encryptPassword(inputField.getText())){
+            inputField.setText(ConfigA.decryptString(config.getValue("AutoLogin", "autoRegisterPassword")));
         }
         if(button3.getMessage()!=Text.literal("§atrue")&&autoRegister){
             button3.setMessage(Text.literal("§atrue"));
@@ -116,7 +115,7 @@ public class ConfigMenuScreen extends Screen {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == GLFW.GLFW_KEY_ENTER||keyCode == GLFW.GLFW_KEY_KP_ENTER) {
             String enteredValue = inputField.getText();
-            config.setValue("AutoLogin", "autoRegisterPassword", ConfigA.encryptString(enteredValue));
+            config.setValue("AutoLogin", "autoRegisterPassword", config.encryptPassword(enteredValue));
             displayTextForSeconds("§aPassword added",buttonT6,1);
             return true;
         }

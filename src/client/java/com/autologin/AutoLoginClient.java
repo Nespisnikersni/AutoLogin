@@ -12,21 +12,32 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.Map;
+
 
 public class AutoLoginClient implements ClientModInitializer {
 	public static final String MOD_ID = "autologin";
 	public static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger("AutoLogin");
-	private ConfigA config=new ConfigA();
+	private ConfigA config=new ConfigA("AutoLogin",true,"Data","AutoLogin","NewData");
 	private static KeyBinding keyBinding;
+	private Map<String, String> oldPasswords;
 
 	@Override
 	public void onInitializeClient() {
-		config.createConfig("Data");
-		config.createConfig("AutoLogin");
+		config.addValue("Data","funtime.su:25565",ConfigA.encryptString("12345678"));
 		if(config.isEmpty("AutoLogin")) {
-			config.addString("AutoLogin", "autoLogin", "true");
-			config.addString("AutoLogin", "autoRegister", "true");
-			config.addString("AutoLogin", "autoRegisterPassword", ConfigA.encryptString("12345678"));
+			config.addValue("AutoLogin","encryptVersion","1");
+			config.addValue("AutoLogin", "autoLogin", "true");
+			config.addValue("AutoLogin", "autoRegister", "true");
+			config.addValue("AutoLogin", "autoRegisterPassword", config.encryptPassword("12345678"));
+		}
+		config.createHiddenFile("key");
+		config.addValue("key","key",config.generateRandomKey());
+		if(config.getValue("AutoLogin","encryptVersion")==null){
+			config.addValue("AutoLogin","encryptVersion","1");
+			oldPasswords = config.getAllValues("Data");
+			config.makeOld("Data");
+			config.writeNewPasswords(oldPasswords);
 		}
 		registerModMenuIntegration();
 		ClientReceiveMessageEvents.GAME.register(new Event());
@@ -51,6 +62,7 @@ public class AutoLoginClient implements ClientModInitializer {
 			ModMenuApi modMenuApi = new ModMenuIntegration();
 		}
 	}
+
 }
 
 

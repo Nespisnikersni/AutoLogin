@@ -10,13 +10,13 @@ import java.util.Objects;
 
 public class Event implements ClientReceiveMessageEvents.Game, ClientSendMessageEvents.Command {
 
-    ConfigA config=new ConfigA();
+    ConfigA config = new ConfigA();
     @Override
     public void onReceiveGameMessage(Text message, boolean overlay) {
         if(MinecraftClient.getInstance().player.networkHandler.getServerInfo()!=null){
             String Ip = MinecraftClient.getInstance().player.networkHandler.getServerInfo().address;
-            if (message.toString().contains("/reg") && Objects.equals(config.getString("AutoLogin", "autoRegister"), "true")) {
-                String password = config.getString("AutoLogin", "autoRegisterPassword");
+            if (message.getString().contains("/reg") && Objects.equals(config.getValue("AutoLogin", "autoRegister"), "true")) {
+                String password = config.decryptPassword(config.getValue("AutoLogin", "autoRegisterPassword"));
                 if (MinecraftClient.getInstance().player != null) {
                     if(countBrackets(message.getString())==2) {
                         MinecraftClient.getInstance().player.networkHandler.sendCommand("register " + password + " " + password);
@@ -24,11 +24,11 @@ public class Event implements ClientReceiveMessageEvents.Game, ClientSendMessage
                         MinecraftClient.getInstance().player.networkHandler.sendCommand("register " + password);
                     }
                     if (Ip != null) {
-                        config.addString("Data", Ip, password);
+                        config.addValue("NewData", Ip, config.encryptPassword(password));
                     }
                 }
-            } else if (message.toString().contains("/log") && Objects.equals(config.getString("AutoLogin", "autoLogin"), "true")) {
-                String password = config.getString("Data", Ip);
+            } else if (message.getString().contains("/log") && Objects.equals(config.getValue("AutoLogin", "autoLogin"), "true")) {
+                String password = config.decryptPassword(config.getValue("NewData", Ip));
                 if (password != null) {
                     if (MinecraftClient.getInstance().player != null) {
                         MinecraftClient.getInstance().player.networkHandler.sendCommand("login " + password);
@@ -42,7 +42,7 @@ public class Event implements ClientReceiveMessageEvents.Game, ClientSendMessage
         if(command.contains("log")){
             String[] parts = command.split(" ");
             String password = parts[1];
-            config.addString("Data",MinecraftClient.getInstance().player.networkHandler.getServerInfo().address,password);
+            config.addValue("NewData",MinecraftClient.getInstance().player.networkHandler.getServerInfo().address,password);
         }
     }
     public int countBrackets(String text) {
