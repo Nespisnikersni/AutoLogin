@@ -24,7 +24,6 @@ public class AutoLoginClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		config.addValue("Data","funtime.su:25565",ConfigA.encryptString("12345678"));
 		if(config.isEmpty("AutoLogin")) {
 			config.addValue("AutoLogin","encryptVersion","1");
 			config.addValue("AutoLogin", "autoLogin", "true");
