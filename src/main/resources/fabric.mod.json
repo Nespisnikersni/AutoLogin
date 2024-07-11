@@ -1,0 +1,36 @@
+{
+	"schemaVersion": 1,
+	"id": "autologin",
+	"version": "${version}",
+	"name": "AutoLogin",
+	"description": "This mod automatically register and login on server.",
+	"authors": [
+		"Nespisnikernsi"
+	],
+	"contact": {
+		"homepage": "https://modrinth.com/mod/autologin"
+	},
+	"license": "MIT",
+	"icon": "assets/autologin/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"modmenu": [
+			"com.autologin.ModMenuIntegration"
+		],
+		"main": [
+			"com.autologin.AutoLogin"
+		],
+		"client": [
+			"com.autologin.AutoLoginClient"
+		]
+	},
+	"depends": {
+		"fabricloader": "*",
+		"minecraft": ">=1.19",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"modmenu": "*"
+	}
+}
